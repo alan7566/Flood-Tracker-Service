@@ -1,4 +1,4 @@
-package com.escamilla.core.controller;
+package com.escamilla.auth.controller;
 
 import com.escamilla.auth.payload.request.LoginRequest;
 import com.escamilla.auth.payload.request.SignupRequest;
