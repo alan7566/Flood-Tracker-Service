@@ -1,16 +1,22 @@
 package com.escamilla.sensor.config;
 
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+
 import javax.net.SocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 import java.io.FileInputStream;
-import java.security.KeyFactory;
+import java.io.FileReader;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.security.spec.PKCS8EncodedKeySpec;
+
+
 
 public class MqttSSLUtil {
     SocketFactory getSslSocketFactory(String CA_CERT_PATH, String CLIENT_CERT_PATH, String CLIENT_KEY_PATH) {
@@ -33,13 +39,18 @@ public class MqttSSLUtil {
 
             // Cargar la clave privada del cliente
 
-            FileInputStream clientKeyInput = new FileInputStream(CLIENT_KEY_PATH);
-            byte[] keyBytes = clientKeyInput.readAllBytes();
-            clientKeyInput.close();
-            PrivateKey privateKey = KeyFactory.getInstance("RSA").generatePrivate(
-                    new PKCS8EncodedKeySpec(keyBytes)
-            );
-
+            PrivateKey privateKey;
+            try (PEMParser pemParser = new PEMParser(new FileReader(CLIENT_KEY_PATH))) {
+                Object object = pemParser.readObject();
+                if (object instanceof PEMKeyPair) {
+                    PrivateKeyInfo privateKeyInfo = ((PEMKeyPair) object).getPrivateKeyInfo();
+                    privateKey = new JcaPEMKeyConverter().getPrivateKey(privateKeyInfo);
+                } else if (object instanceof PrivateKeyInfo) {
+                    privateKey = new JcaPEMKeyConverter().getPrivateKey((PrivateKeyInfo) object);
+                } else {
+                    throw new IllegalArgumentException("Formato de clave privada no soportado.");
+                }
+            }
             // Crear un KeyStore para la clave privada y el certificado del cliente
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore.load(null, null);
