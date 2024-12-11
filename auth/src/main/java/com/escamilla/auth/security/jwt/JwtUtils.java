@@ -1,10 +1,9 @@
 package com.escamilla.auth.security.jwt;
 
 import com.escamilla.auth.model.entity.User;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -44,11 +43,19 @@ public class JwtUtils {
     public boolean validateJwtToken(String authToken) {
         try {
             logger.debug("JwtUtils: Validating JWT");
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            Jwts.parserBuilder().setSigningKey(jwtSecret).build().parse(authToken);
             return true;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            logger.error("Invalid JWT signature: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            logger.error("Expired JWT token: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("Unsupported JWT token: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT token compact of handler are invalid: {}", e.getMessage());
         } catch (Exception e) {
             logger.error("JWT validation error: {}", e.getMessage());
-            return false;
         }
+        return false;
     }
 }

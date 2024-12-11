@@ -36,7 +36,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         // Omitir validación para rutas de registro e inicio de sesión
         if ("/api/auth/signup".equals(request.getRequestURI()) ||
-                "/api/auth/signin".equals(request.getRequestURI())) {
+                "/api/auth/signin".equals(request.getRequestURI()) ||
+                "/api/auth/validate".equals(request.getRequestURI())) {
             System.out.println("Skipping authentication for signup/signin");
             filterChain.doFilter(request, response);
             return;

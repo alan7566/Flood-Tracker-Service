@@ -68,4 +68,27 @@ public class AuthService {
                 user.getRole().name()
         ));
     }
+
+    public ResponseEntity<?> validateToken(String token) {
+        if (token == null || token.isBlank()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Token is missing or blank"));
+        }
+
+        if (!token.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Token format is invalid"));
+        }
+        System.out.println("Token received in Auth Service: " + token);
+        // Elimina el prefijo "Bearer " antes de pasarlo a jwtUtils
+        token = token.substring(7);
+        System.out.println("Token after removing Bearer: " + token);
+
+
+        if (jwtUtils.validateJwtToken(token)) {
+            return ResponseEntity.ok(new MessageResponse("Token is valid"));
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("Token is invalid"));
+        }
+    }
+
+
 }

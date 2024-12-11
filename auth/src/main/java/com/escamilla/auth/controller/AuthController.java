@@ -24,4 +24,9 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         return authService.authenticateUser(loginRequest);
     }
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validate(@Valid @RequestHeader("Authorization") String token) {
+        return authService.validateToken(token);
+    }
 }
