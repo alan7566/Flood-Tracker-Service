@@ -50,7 +50,6 @@ public class MqttConfig {
     }
 
 
-
     @Bean
     public AbstractMessageChannel mqttInputChannel() {
         return new DirectChannel();
@@ -69,14 +68,4 @@ public class MqttConfig {
     }
 
 
-    @Bean
-    @ServiceActivator(inputChannel = "mqttInputChannel")
-    public MessageHandler mqttMessageHandler() {
-        return message -> {
-            // Este bean procesa el mensaje recibido del broker MQTT
-            String payload = (String) message.getPayload();
-            String topic = message.getHeaders().get("mqtt_receivedTopic", String.class);
-            System.out.println("Mensaje recibido en topic [" + topic + "]: " + payload);
-        };
-    }
 }
