@@ -77,10 +77,8 @@ public class AuthService {
         if (!token.startsWith("Bearer ")) {
             return ResponseEntity.badRequest().body(new MessageResponse("Token format is invalid"));
         }
-        System.out.println("Token received in Auth Service: " + token);
         // Elimina el prefijo "Bearer " antes de pasarlo a jwtUtils
         token = token.substring(7);
-        System.out.println("Token after removing Bearer: " + token);
 
 
         if (jwtUtils.validateJwtToken(token)) {

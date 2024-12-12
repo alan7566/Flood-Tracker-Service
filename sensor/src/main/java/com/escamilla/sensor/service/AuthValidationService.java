@@ -29,8 +29,6 @@ public class AuthValidationService {
 
             HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-            System.out.println("Auth Service URL: " + authServiceUrl + "/auth/validate");
-            System.out.println("Authorization Header: " + headers.get("Authorization"));
 
             ResponseEntity<Void> response = restTemplate.exchange(
                     authServiceUrl + "/auth/validate",

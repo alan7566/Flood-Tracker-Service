@@ -32,7 +32,6 @@ public class MqttService {
             String topic = message.getHeaders().get("mqtt_receivedTopic", String.class);
             assert topic != null;
             String subtopic = topic.substring(topic.lastIndexOf('/') + 1);
-            System.out.println("Subtopic: " + subtopic);
             SensorType sensorType = SensorType.valueOf(subtopic.toUpperCase());
             System.out.println("Mensaje recibido en topic [" + topic + "]: " + payload);
 
